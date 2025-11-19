@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Prisma } from '../generated/prisma/client';
 
 export const errorHandler = (
   err: any,
@@ -6,7 +7,14 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('Error handler dipanggil:', err);
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === "P2025") {
+      return res.status(404).json({
+        message: err.meta?.cause || "Resource not found",
+      });
+    }
+  }
 
   if (err.statusCode === 400 && err.validationErrors) {
     return res.status(400).json({
