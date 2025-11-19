@@ -6,7 +6,7 @@ export const validate =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsed = await schema.parseAsync(req.body);
-      req.body = parsed; // Optional: replace with validated data
+      req.body = parsed;
       return next();
     } catch (error: any) {
       if (error.name === 'ZodError') {

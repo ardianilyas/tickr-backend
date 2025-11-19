@@ -1,4 +1,3 @@
-// middleware/errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
 
 export const errorHandler = (
@@ -7,28 +6,25 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('Error handler dipanggil:', err); // Tambahkan ini dulu!!
+  console.log('Error handler dipanggil:', err);
 
-  // Khusus validation error dari validatedBody
   if (err.statusCode === 400 && err.validationErrors) {
     return res.status(400).json({
-      message: 'Validasi gagal',
+      message: 'Validation failed',
       errors: err.validationErrors,
     });
   }
 
-  // Kalau ZodError langsung
   if (err.name === 'ZodError') {
     return res.status(400).json({
-      message: 'Validasi gagal',
-      errors: err.errors.map((e: any) => ({
+      message: 'Validation failed',
+      errors: err.issues.map((e: any) => ({
         field: e.path.join('.'),
         message: e.message,
       })),
     });
   }
 
-  // Default
   console.error('Unhandled error:', err);
   res.status(err.statusCode || 500).json({
     message: err.message || 'Server error',
