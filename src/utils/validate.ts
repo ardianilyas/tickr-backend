@@ -1,4 +1,4 @@
-import { ZodSchema, ZodError } from 'zod';
+import { ZodError, ZodType } from 'zod';
 
 export class ValidationError extends Error {
     statusCode = 400;
@@ -14,7 +14,7 @@ export class ValidationError extends Error {
     }
 }
 
-export const validate = <T>(schema: ZodSchema<T>, body: any): T => {
+export const validate = <T>(schema: ZodType<T>, body: any): T => {
     const result = schema.safeParse(body);
   
     if (!result.success) {
