@@ -23,7 +23,7 @@ export class AuthService {
 
         if (!validPassword) throw new Error("Invalid credentials");
 
-        const token = signAccessToken({ id: user.id, email: user.email });
+        const token = signAccessToken({ id: user.id, role: user.role });
 
         return { token };
     }
