@@ -25,6 +25,7 @@ export class CategoryController {
     static async createCategory(req: Request, res: Response, next: NextFunction) {
         try {
             const data = validate(createCategorySchema, req.body);
+
             const category = await CategoryService.createCategory(data);
 
             res.status(201).json({
@@ -54,7 +55,7 @@ export class CategoryController {
     static async deleteCategory(req: Request, res: Response, next: NextFunction) {
         try {
             await CategoryService.deleteCategory(req.params.id);
-            return res.status(200).json({ 
+            return res.status(204).json({ 
                 message: "Category deleted", 
             });
         } catch (error) {
