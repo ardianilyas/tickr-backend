@@ -2,12 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import { validate } from "../../utils/validate";
 import { CategoryService } from "./category.service";
 import { createCategorySchema, updateCategorySchema } from "./category.schema";
+import { sendResponse } from "../../utils/response";
+import { HttpStatus } from "../../constants/httpStatus";
 
 export class CategoryController {
     static async getCategories(req: Request, res: Response, next: NextFunction) {
         try {
             const categories = await CategoryService.getCategories();
-            return res.status(200).json(categories);
+            return sendResponse(res, { data: categories });
         } catch (error) {
             next(error);
         }
@@ -16,7 +18,7 @@ export class CategoryController {
     static async getCategoryById(req: Request, res: Response, next: NextFunction) {
         try {
             const category = await CategoryService.getCategoryById(req.params.id);
-            return res.status(200).json(category);
+            return sendResponse(res, { data: category });
         } catch (error) {
             next(error);
         }
@@ -28,9 +30,10 @@ export class CategoryController {
 
             const category = await CategoryService.createCategory(data);
 
-            res.status(201).json({
+            return sendResponse(res, {
+                status: HttpStatus.CREATED,
                 message: "Category created",
-                category
+                data: category
             });
         } catch (error) {
             next(error);
@@ -43,9 +46,10 @@ export class CategoryController {
 
             const category = await CategoryService.updateCategory(req.params.id, data);
 
-            return res.status(200).json({ 
-                message: "Category updated", 
-                category
+            return sendResponse(res, {
+                status: HttpStatus.OK,
+                message: "Category updated",
+                data: category
             });
         } catch (error) {
             next(error);
@@ -55,8 +59,9 @@ export class CategoryController {
     static async deleteCategory(req: Request, res: Response, next: NextFunction) {
         try {
             await CategoryService.deleteCategory(req.params.id);
-            return res.status(204).json({ 
-                message: "Category deleted", 
+            return sendResponse(res, {
+                status: HttpStatus.NO_CONTENT,
+                message: "Category deleted"
             });
         } catch (error) {
             next(error);
