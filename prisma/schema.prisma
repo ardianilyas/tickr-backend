@@ -62,7 +62,7 @@ model Ticket {
   description String
 
   categoryId  String
-  Category    Category @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
 
   status      TicketStatus @default(OPEN)
 
