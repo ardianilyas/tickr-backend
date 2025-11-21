@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
-import { CreateTicketSchemaRepository, UpdateTicketSchema} from "./ticket.schema";
+import { RequestUser } from "../../types/RequestUser";
+import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchemaRepository} from "./ticket.schema";
 
 export class TicketRepository {
 
@@ -19,6 +20,22 @@ export class TicketRepository {
         return await prisma.ticket.update({
             data,
             where: { id },
+        });
+    }
+
+    async updateTicketStatus(id: string, data: UpdateTicketStatusSchemaRepository) {
+        return prisma.ticket.updateMany({
+            where: {
+              id,
+              OR: [
+                { handledById: null },
+                { handledById: data.handledById },
+              ],
+            },
+            data: {
+              ...data,
+              handledById: data.handledById,
+            },
         });
     }
 

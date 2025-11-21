@@ -3,7 +3,7 @@ import { TicketService } from "./ticket.service";
 import { sendResponse } from "../../utils/response";
 import { HttpStatus } from "../../constants/httpStatus";
 import { validate } from "../../utils/validate";
-import { createTicketSchema, updateTicketSchema } from "./ticket.schema";
+import { createTicketSchema, updateTicketSchema, updateTicketStatusSchema } from "./ticket.schema";
 
 export class TicketController {
     constructor(private ticketService: TicketService) {}
@@ -58,6 +58,19 @@ export class TicketController {
                 status: HttpStatus.OK,
                 message: "Ticket updated",
                 data: ticket
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    updateTicketStatus = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const data = validate(updateTicketStatusSchema, req.body);
+            const user = req.user;
+            await this.ticketService.updateTicketStatus(req.params.id, data, user!);
+            return sendResponse(res, {
+                message: "Ticket status updated",
             });
         } catch (error) {
             next(error);

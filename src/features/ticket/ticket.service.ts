@@ -1,7 +1,9 @@
 import { ForbiddenError } from "../../errors/ForbiddenError";
 import { NotFoundError } from "../../errors/NotFoundError";
+import { UserRole } from "../../generated/prisma/enums";
+import { RequestUser } from "../../types/RequestUser";
 import { TicketRepository } from "./ticket.repository";
-import { CreateTicketSchemaRepository, UpdateTicketSchema } from "./ticket.schema";
+import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
 
 export class TicketService {
     constructor(private ticketRepo: TicketRepository) {}
@@ -32,6 +34,18 @@ export class TicketService {
         return await this.ticketRepo.deleteTicket(id);
     }
 
+    async updateTicketStatus(id: string, data: UpdateTicketStatusSchema, user: RequestUser) {
+        const ticket = await this.ticketRepo.getTicketById(id);
+
+        if (!ticket) throw new NotFoundError("Ticket not found");
+
+        const result = await this.ticketRepo.updateTicketStatus(id, {...data, handledById: user.id});
+
+        if (result.count === 0) {
+            throw new ForbiddenError("This ticket is already handled by another admin");
+        }
+    }
+    
     async getTicketOrThrowError(id: string, userId: string) {
         const ticket = await this.ticketRepo.getTicketById(id);
 
