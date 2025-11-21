@@ -8,6 +8,10 @@ import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSch
 export class TicketService {
     constructor(private ticketRepo: TicketRepository) {}
 
+    async getAllTickets() {
+        return await this.ticketRepo.getAllTickets();
+    }
+
     async getTicketsByUserId(userId: string) {
         return await this.ticketRepo.getTicketsByUserId(userId);
     }

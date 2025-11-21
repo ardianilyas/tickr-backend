@@ -4,25 +4,22 @@ import { TicketService } from "./ticket.service";
 import { TicketController } from "./ticket.controller";
 import { allowAdmin, allowUserAndAdmin } from "../../middlewares/roleGuard";
 
-const router = Router();
-const userRouter = router;
-const adminRouter = router;
+const userRouter = Router();
+const adminRouter = Router();
 
 const ticketRepository = new TicketRepository();
 const ticketService = new TicketService(ticketRepository);
 const ticketController = new TicketController(ticketService);
 
+adminRouter.use(allowAdmin);
+adminRouter.get("/", ticketController.getAllTickets);
+adminRouter.post("/:id/status", ticketController.updateTicketStatus);
+
 userRouter.use(allowUserAndAdmin);
 userRouter.get("/", ticketController.getTicketsByUserId);
 userRouter.get("/:id", ticketController.getTicketById);
 userRouter.post("/", ticketController.createTicket);
-userRouter.put("/:id", ticketController.updateTicket);
+userRouter.patch("/:id/update", ticketController.updateTicket);
 userRouter.delete("/:id", ticketController.deleteTicket);
 
-adminRouter.use(allowAdmin);
-adminRouter.put("/:id/status", ticketController.updateTicketStatus);
-
-router.use("/", userRouter);
-router.use("/", adminRouter);
-
-export default router;
+export default { userRouter, adminRouter };

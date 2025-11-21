@@ -8,7 +8,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { checkRole } from "../middlewares/checkRole.middleware";
 import { UserRole } from "../generated/prisma/enums";
 
-export const router = Router();
+const router = Router();
 
 router.get("/health", authMiddleware, checkRole(UserRole.ADMIN), (req: Request, res: Response) => {
     res.status(200).json({ status: "OK" });
@@ -16,4 +16,7 @@ router.get("/health", authMiddleware, checkRole(UserRole.ADMIN), (req: Request, 
 
 router.use("/auth", authRoutes);
 router.use("/categories", authMiddleware, checkRole(UserRole.ADMIN), categoryRoutes);
-router.use("/tickets", authMiddleware, ticketRoutes);
+router.use("/admin/tickets", authMiddleware, ticketRoutes.adminRouter);
+router.use("/tickets", authMiddleware, ticketRoutes.userRouter);
+
+export default router;

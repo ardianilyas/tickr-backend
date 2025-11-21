@@ -8,6 +8,19 @@ import { createTicketSchema, updateTicketSchema, updateTicketStatusSchema } from
 export class TicketController {
     constructor(private ticketService: TicketService) {}
 
+    getAllTickets = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const tickets = await this.ticketService.getAllTickets();
+            return sendResponse(res, {
+                status: HttpStatus.OK,
+                message: "Tickets fetched",
+                data: tickets
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     getTicketsByUserId = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const tickets = await this.ticketService.getTicketsByUserId(req.user?.id!);
@@ -70,6 +83,7 @@ export class TicketController {
             const user = req.user;
             const ticket = await this.ticketService.updateTicketStatus(req.params.id, data, user!);
             return sendResponse(res, {
+                status: HttpStatus.OK,
                 message: "Ticket status updated",
                 data: ticket,
             });
