@@ -39,11 +39,12 @@ export class TicketService {
 
         if (!ticket) throw new NotFoundError("Ticket not found");
 
-        const result = await this.ticketRepo.updateTicketStatus(id, {...data, handledById: user.id});
+        const canHandleFirstTime = !ticket.handledById;
+        const isHandledByThisAdmin = ticket.handledById === user.id;
 
-        if (result.count === 0) {
-            throw new ForbiddenError("This ticket is already handled by another admin");
-        }
+        if (!canHandleFirstTime && !isHandledByThisAdmin) throw new ForbiddenError("This ticket is alreade handled by another admin");
+
+        return await this.ticketRepo.updateTicketStatus(id, {...data, handledById: user.id});
     }
     
     async getTicketOrThrowError(id: string, userId: string) {

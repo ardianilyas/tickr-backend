@@ -24,18 +24,9 @@ export class TicketRepository {
     }
 
     async updateTicketStatus(id: string, data: UpdateTicketStatusSchemaRepository) {
-        return prisma.ticket.updateMany({
-            where: {
-              id,
-              OR: [
-                { handledById: null },
-                { handledById: data.handledById },
-              ],
-            },
-            data: {
-              ...data,
-              handledById: data.handledById,
-            },
+        return await prisma.ticket.update({
+            data,
+            where: { id },
         });
     }
 

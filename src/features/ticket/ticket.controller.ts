@@ -68,9 +68,10 @@ export class TicketController {
         try {
             const data = validate(updateTicketStatusSchema, req.body);
             const user = req.user;
-            await this.ticketService.updateTicketStatus(req.params.id, data, user!);
+            const ticket = await this.ticketService.updateTicketStatus(req.params.id, data, user!);
             return sendResponse(res, {
                 message: "Ticket status updated",
+                data: ticket,
             });
         } catch (error) {
             next(error);
