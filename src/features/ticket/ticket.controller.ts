@@ -23,7 +23,7 @@ export class TicketController {
 
     getTicketById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const ticket = await this.ticketService.getTicketById(req.params.id);
+            const ticket = await this.ticketService.getTicketById(req.params.id, req.user?.id!);
             return sendResponse(res, {
                 status: HttpStatus.OK,
                 message: "Ticket fetched",
@@ -53,7 +53,7 @@ export class TicketController {
         try {
             const id = req.params.id;
             const data = validate(updateTicketSchema, req.body);
-            const ticket = await this.ticketService.updateTicket(id, data);
+            const ticket = await this.ticketService.updateTicket(id, data, req.user?.id!);
             return sendResponse(res, {
                 status: HttpStatus.OK,
                 message: "Ticket updated",
@@ -67,9 +67,9 @@ export class TicketController {
     deleteTicket = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const id = req.params.id;
-            await this.ticketService.deleteTicket(id);
+            await this.ticketService.deleteTicket(id, req.user?.id!);
             return sendResponse(res, {
-                status: HttpStatus.NO_CONTENT,
+                status: HttpStatus.OK,
                 message: "Ticket deleted"
             });
         } catch (error) {
