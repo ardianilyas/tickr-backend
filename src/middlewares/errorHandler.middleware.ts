@@ -13,6 +13,10 @@ export const errorHandler = (
       return res.status(404).json({
         message: err.meta?.cause || "Resource not found",
       });
+    } else if (err.code === "P2003") {
+      return res.status(400).json({
+        message: `${err.meta?.modelName} cannot be deleted because it is still used by another resource.`,
+      })
     }
   }
 
