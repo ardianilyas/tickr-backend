@@ -1,4 +1,5 @@
 import { UserRole } from "../../generated/prisma/enums";
+import { logger } from "../../utils/logger";
 import { UserRepository } from "./user.repository";
 
 export class UserService {
@@ -9,6 +10,18 @@ export class UserService {
     }
 
     async updateUserRole(id: string, role: UserRole) {
-        return await this.userRepo.updateUserRole(id, role);
+        try {
+            const updated = await this.userRepo.updateUserRole(id, role);
+
+            logger.info(
+                { id, role },
+                "User role updated"
+            );
+
+            return updated;
+        } catch (error) {
+            logger.error(`Failed to update user role ${error}`);
+            throw error;
+        }
     }
 }
