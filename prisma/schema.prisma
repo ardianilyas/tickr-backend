@@ -19,6 +19,13 @@ enum UserRole {
   ADMIN
 }
 
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 enum TicketStatus {
   OPEN
   IN_PROGRESS
@@ -64,6 +71,7 @@ model Ticket {
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
 
+  priority    TicketPriority @default(LOW)
   status      TicketStatus @default(OPEN)
 
   createdById String
