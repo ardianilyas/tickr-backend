@@ -7,6 +7,7 @@ import ticketRoutes from "../features/ticket/ticket.route";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { checkRole } from "../middlewares/checkRole.middleware";
 import { UserRole } from "../generated/prisma/enums";
+import userRouter from "../features/user/user.route";
 
 const router = Router();
 
@@ -18,5 +19,7 @@ router.use("/auth", authRoutes);
 router.use("/categories", authMiddleware, checkRole(UserRole.ADMIN), categoryRoutes);
 router.use("/admin/tickets", authMiddleware, ticketRoutes.adminRouter);
 router.use("/tickets", authMiddleware, ticketRoutes.userRouter);
+
+router.use("/admin/users", userRouter);
 
 export default router;
