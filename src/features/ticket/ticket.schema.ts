@@ -1,16 +1,18 @@
 import z from "zod";
-import { TicketStatus } from "../../generated/prisma/enums";
+import { TicketPriority, TicketStatus } from "../../generated/prisma/enums";
 
 export const createTicketSchema = z.object({
     title: z.string().min(1, "Title is required"),
     description: z.string().min(1, "Description is required"),
     categoryId: z.string().min(1, "Category is required"),
+    priority: z.enum(TicketPriority),
 });
 
 export const updateTicketSchema = z.object({
     title: z.string().min(1, "Title is required").optional(),
     description: z.string().min(1, "Description is required").optional(),
     categoryId: z.string().min(1, "Category is required").optional(),
+    priority: z.enum(TicketPriority).optional(),
 });
 
 export const updateTicketStatusSchema = z.object({
