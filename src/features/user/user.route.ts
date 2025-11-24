@@ -15,6 +15,7 @@ const userController = new UserController(userService);
 userRouter.use(authMiddleware, checkRole(UserRole.ADMIN));
 
 userRouter.get("/", userController.getUsers);
+userRouter.get("/:id", userController.getUserById);
 userRouter.patch("/:id/role", userController.updateUserRole);
 
 export default userRouter;

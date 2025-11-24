@@ -13,6 +13,15 @@ export class UserRepository {
         });
     }
 
+    async getUserById(id: string) {
+        return await prisma.user.findUniqueOrThrow({ 
+            where: { id },
+            include: {
+                createdTickets: true,
+            },
+        });
+    }
+
     async updateUserRole(id: string, role: UserRole) {
         return await prisma.user.update({
             where: { id },

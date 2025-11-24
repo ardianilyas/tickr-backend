@@ -9,6 +9,20 @@ export class UserService {
         return await this.userRepo.getUsers();
     }
 
+    async getUserById(id: string) {
+        const user = await this.userRepo.getUserById(id);
+
+        if (user) {
+            const { createdTickets, ...rest } = user;
+            return {
+                ...rest,
+                tickets: createdTickets
+            }
+        }
+        
+        return null;
+    }
+
     async updateUserRole(id: string, role: UserRole) {
         try {
             const updated = await this.userRepo.updateUserRole(id, role);

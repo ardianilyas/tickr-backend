@@ -22,6 +22,20 @@ export class UserController {
         }
     }
 
+    getUserById = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user = await this.userService.getUserById(req.params.id);
+
+            return sendResponse(res, {
+                status: HttpStatus.OK,
+                message: "User fetched",
+                data: user
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     updateUserRole = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const id = req.params.id;
