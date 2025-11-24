@@ -10,7 +10,14 @@ export class UserService {
     async getUsers(req: Request) {
         const model = await this.userRepo.getUsers();
 
-        const user = await paginate(model, req);
+        const { search } = req.query;
+
+        const where = search ? { name: { contains: search, mode: "insensitive" } } : { }
+
+        const user = await paginate(model, req, {
+            select: { id: true, name: true, email: true, role: true },
+            where
+        });
 
         return user;
     }
