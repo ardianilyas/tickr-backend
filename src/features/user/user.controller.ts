@@ -10,7 +10,7 @@ export class UserController {
 
     getUsers = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const users = await this.userService.getUsers();
+            const users = await this.userService.getUsers(req);
 
             return sendResponse(res, {
                 status: HttpStatus.OK,

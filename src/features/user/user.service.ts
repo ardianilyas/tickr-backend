@@ -1,12 +1,18 @@
+import { Request } from "express";
 import { UserRole } from "../../generated/prisma/enums";
 import { logger } from "../../utils/logger";
 import { UserRepository } from "./user.repository";
+import { paginate } from "../../utils/paginate";
 
 export class UserService {
     constructor(private userRepo: UserRepository) {}
 
-    async getUsers() {
-        return await this.userRepo.getUsers();
+    async getUsers(req: Request) {
+        const model = await this.userRepo.getUsers();
+
+        const user = await paginate(model, req);
+
+        return user;
     }
 
     async getUserById(id: string) {
@@ -19,7 +25,7 @@ export class UserService {
                 tickets: createdTickets
             }
         }
-        
+
         return null;
     }
 
