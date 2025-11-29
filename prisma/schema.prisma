@@ -44,6 +44,8 @@ model User {
   createdTickets   Ticket[] @relation("TicketCreatedBy")
   handledTickets   Ticket[] @relation("TicketHandledBy")
 
+  comments  Comment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -80,8 +82,26 @@ model Ticket {
   handledById String?
   handledBy   User? @relation("TicketHandledBy", fields: [handledById], references: [id])
 
+  comments    Comment[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("tickets")
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  body      String
+
+  ticketId  String
+  ticket    Ticket    @relation(fields: [ticketId], references: [id])
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("comments")
 }
