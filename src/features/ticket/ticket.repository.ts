@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import { RequestUser } from "../../types/RequestUser";
+import { UserSelect } from "../../shared/constants/user.constant";
 import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchemaRepository} from "./ticket.schema";
 
 export class TicketRepository {
@@ -13,7 +13,18 @@ export class TicketRepository {
     }
 
     async getTicketById(id: string) {
-        return await prisma.ticket.findUnique({ where: { id } });
+        return await prisma.ticket.findUnique({ 
+            where: { id },
+            include: {
+                comments: {
+                    include: {
+                        user: { select: UserSelect }
+                    }
+                },
+                createdBy: { select: UserSelect },
+                handledBy: { select: UserSelect },
+            },
+        });
     }
 
     async createTicket(data: CreateTicketSchemaRepository) {
