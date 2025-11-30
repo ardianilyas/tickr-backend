@@ -33,6 +33,14 @@ enum TicketStatus {
   CLOSED
 }
 
+enum TimelineEventType {
+  CREATED
+  ASSIGNED
+  COMMENTED
+  STATUS_CHANGED
+  RESOLVED
+}
+
 model User {
   id        String @id @default(uuid())
   name      String
@@ -45,6 +53,8 @@ model User {
   handledTickets   Ticket[] @relation("TicketHandledBy")
 
   comments  Comment[]
+
+  timelines TicketTimeline[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,6 +94,8 @@ model Ticket {
 
   comments    Comment[]
 
+  timelines   TicketTimeline[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -104,4 +116,23 @@ model Comment {
   updatedAt DateTime  @updatedAt
 
   @@map("comments")
+}
+
+model TicketTimeline {
+  id          String @id @default(uuid())
+
+  title       String
+  description String
+
+  ticketId    String
+  ticket      Ticket  @relation(fields: [ticketId], references: [id])
+
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+
+  eventType   TimelineEventType
+
+  createdAt   DateTime @default(now())
+
+  @@map("ticket_timelines")
 }
