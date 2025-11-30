@@ -18,8 +18,8 @@ export class TicketService {
         return await this.ticketRepo.getTicketsByUserId(userId);
     }
 
-    async getTicketById(id: string, userId: string) {
-        const ticket = await this.getTicketOrThrowError(id, userId);
+    async getTicketById(id: string, user: RequestUser) {
+        const ticket = await this.getTicketOrThrowError(id, user);
         
         return ticket;
     }
@@ -40,8 +40,8 @@ export class TicketService {
         }
     }
 
-    async updateTicket(id: string, data: UpdateTicketSchema, userId: string) {
-        await this.getTicketOrThrowError(id, userId);
+    async updateTicket(id: string, data: UpdateTicketSchema, user: RequestUser) {
+        await this.getTicketOrThrowError(id, user);
         
         try {
             const updated = await this.ticketRepo.updateTicket(id, data);
@@ -55,8 +55,8 @@ export class TicketService {
         }
     }
 
-    async deleteTicket(id: string, userId: string) {
-        await this.getTicketOrThrowError(id, userId);
+    async deleteTicket(id: string, user: RequestUser) {
+        await this.getTicketOrThrowError(id, user);
 
         try {
             const deleted = await this.ticketRepo.deleteTicket(id);
@@ -105,12 +105,12 @@ export class TicketService {
         }
     }
     
-    async getTicketOrThrowError(id: string, userId: string) {
+    async getTicketOrThrowError(id: string, user: RequestUser) {
         const ticket = await this.ticketRepo.getTicketById(id);
 
         if (!ticket) throw new NotFoundError("Ticket not found");
 
-        if (ticket?.createdById !== userId) throw new ForbiddenError("You dont have access to this resource");
+        if (ticket?.createdById !== user.id && user.role !== UserRole.ADMIN) throw new ForbiddenError("You dont have access to this resource");
 
         return ticket;
     }

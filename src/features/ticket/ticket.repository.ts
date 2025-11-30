@@ -5,7 +5,7 @@ import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSch
 export class TicketRepository {
 
     async getAllTickets() {
-        return await prisma.ticket.findMany();
+        return await prisma.ticket.findMany({ orderBy: { createdAt: "desc" } });
     }
 
     async getTicketsByUserId(userId: string) {
