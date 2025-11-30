@@ -21,6 +21,7 @@ export class TicketRepository {
                         user: { select: UserSelect }
                     }
                 },
+                timelines: true,
                 createdBy: { select: UserSelect },
                 handledBy: { select: UserSelect },
             },
