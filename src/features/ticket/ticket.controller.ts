@@ -51,7 +51,7 @@ export class TicketController {
         try {
             const data = validate(createTicketSchema, req.body);
 
-            const ticket = await this.ticketService.createTicket({ ...data, createdById: req.user?.id! });
+            const ticket = await this.ticketService.createTicket({ ...data, createdById: req.user?.id! }, req.user!);
             return sendResponse(res, {
                 status: HttpStatus.CREATED,
                 message: "Ticket created",

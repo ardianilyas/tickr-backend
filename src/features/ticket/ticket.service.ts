@@ -1,13 +1,14 @@
 import { ForbiddenError } from "../../errors/ForbiddenError";
 import { NotFoundError } from "../../errors/NotFoundError";
-import { UserRole } from "../../generated/prisma/enums";
+import { TicketStatus, UserRole } from "../../generated/prisma/enums";
 import { RequestUser } from "../../types/RequestUser";
 import { logger } from "../../utils/logger";
+import { TimelineService } from "../timeline/timeline.service";
 import { TicketRepository } from "./ticket.repository";
 import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
 
 export class TicketService {
-    constructor(private ticketRepo: TicketRepository) {}
+    constructor(private ticketRepo: TicketRepository, private timelineService: TimelineService) {}
 
     async getAllTickets() {
         return await this.ticketRepo.getAllTickets();
@@ -23,10 +24,15 @@ export class TicketService {
         return ticket;
     }
 
-    async createTicket(data: CreateTicketSchemaRepository) {
+    async createTicket(data: CreateTicketSchemaRepository, user: RequestUser) {
         try {
             const created = await this.ticketRepo.createTicket(data);
-            logger.info({ data}, "Ticket created");
+
+            // block logic for ticket timeline created
+            await this.timelineService.createTicketTimeline(created.id, user);
+
+            logger.info({ data }, "Ticket created");
+
             return created;
         } catch (error) {
             logger.error(`Failed to create ticket ${error}`);
@@ -76,6 +82,19 @@ export class TicketService {
 
         try {
             const updated = await this.ticketRepo.updateTicketStatus(id, {...data, handledById: user.id});
+
+            // block logic for ticket timeline assigned
+            if (!ticket.handledById) {
+                await this.timelineService.assignedTicketTimeline(id, user);
+            }
+
+            if (data.status !== TicketStatus.RESOLVED) {
+                // block logic for ticket timeline status changed
+                await this.timelineService.statusChangedTicketTimeline(id, user, data.status);
+            } else {
+                // block logic for ticket timeline status resolved
+                await this.timelineService.resolvedTicketTimeline(id, user);
+            }
 
             logger.info({ updated }, "Ticket status updated");
 

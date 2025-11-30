@@ -8,7 +8,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
   try {
     const user = verifyAccessToken(token);
-    req.user = { id: user.id, role: user.role };
+    req.user = { id: user.id, role: user.role, name: user.name };
     next();
   } catch {
     return res.status(401).json({ error: "Invalid token" });

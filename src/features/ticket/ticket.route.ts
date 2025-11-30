@@ -3,12 +3,20 @@ import { TicketRepository } from "./ticket.repository";
 import { TicketService } from "./ticket.service";
 import { TicketController } from "./ticket.controller";
 import { allowAdmin, allowUserAndAdmin } from "../../middlewares/roleGuard";
+import { TimelineRepository } from "../timeline/timeline.repository";
+import { TimelineService } from "../timeline/timeline.service";
 
 const userRouter = Router();
 const adminRouter = Router();
 
+// initiate repositories
 const ticketRepository = new TicketRepository();
-const ticketService = new TicketService(ticketRepository);
+const timelineRepository = new TimelineRepository();
+
+// initiate services
+const timelineService = new TimelineService(timelineRepository);
+const ticketService = new TicketService(ticketRepository, timelineService);
+
 const ticketController = new TicketController(ticketService);
 
 adminRouter.use(allowAdmin);
