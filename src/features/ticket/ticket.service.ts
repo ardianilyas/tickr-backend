@@ -5,10 +5,23 @@ import { RequestUser } from "../../types/RequestUser";
 import { logger } from "../../utils/logger";
 import { TimelineService } from "../timeline/timeline.service";
 import { TicketRepository } from "./ticket.repository";
-import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
+import { CreateTicketSchema, CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
 
 export class TicketService {
     constructor(private ticketRepo: TicketRepository, private timelineService: TimelineService) {}
+
+    private prefixCode = "TCK-";
+
+    private generateNextCode(lastCode: string | null): string {
+        if (!lastCode) return `${this.prefixCode}0001`;
+
+        const lastNumber = parseInt(lastCode.split("-").pop()!, 10);
+        const nextNumber = lastNumber + 1;
+
+        const padded = nextNumber.toString().padStart(4, "0");
+
+        return `${this.prefixCode}${padded}`;
+    }
 
     async getAllTickets() {
         return await this.ticketRepo.getAllTickets();
@@ -24,9 +37,12 @@ export class TicketService {
         return ticket;
     }
 
-    async createTicket(data: CreateTicketSchemaRepository, user: RequestUser) {
+    async createTicket(data: CreateTicketSchema, user: RequestUser) {
+        const lastCode = await this.ticketRepo.getLastTicketCode();
+        const code = this.generateNextCode(lastCode);
+        
         try {
-            const created = await this.ticketRepo.createTicket(data);
+            const created = await this.ticketRepo.createTicket({ ...data, createdById: user.id, code });
 
             // block logic for ticket timeline created
             await this.timelineService.createTicketTimeline(created.id, user);

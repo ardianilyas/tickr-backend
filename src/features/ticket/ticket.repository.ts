@@ -4,6 +4,15 @@ import { CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSch
 
 export class TicketRepository {
 
+    async getLastTicketCode() {
+        const data = await prisma.ticket.findFirst({
+            orderBy: { code: "desc" },
+            select: { code: true },
+        });
+
+        return data?.code ?? null;
+    }
+
     async getAllTickets() {
         return await prisma.ticket.findMany({ orderBy: { createdAt: "desc" } });
     }

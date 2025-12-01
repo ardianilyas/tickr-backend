@@ -25,6 +25,7 @@ export const updateTicketStatusSchemaRepository = updateTicketStatusSchema.exten
 
 export const createTicketSchemaRepository = createTicketSchema.extend({ 
     createdById: z.string(), 
+    code: z.string(),
 });
 
 export type CreateTicketSchema = z.infer<typeof createTicketSchema>;
