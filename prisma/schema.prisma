@@ -77,8 +77,10 @@ model Category {
 
 model Ticket {
   id          String @id @default(uuid())
+
   title       String
   description String
+  code        String
 
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
