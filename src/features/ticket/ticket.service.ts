@@ -4,6 +4,7 @@ import { TicketStatus, UserRole } from "../../generated/prisma/enums";
 import { RequestUser } from "../../types/RequestUser";
 import { logger } from "../../utils/logger";
 import { TimelineService } from "../timeline/timeline.service";
+import { ticketQueue } from "./ticket.queue";
 import { TicketRepository } from "./ticket.repository";
 import { CreateTicketSchema, CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
 
@@ -43,6 +44,13 @@ export class TicketService {
         
         try {
             const created = await this.ticketRepo.createTicket({ ...data, createdById: user.id, code });
+
+            if (data.priority === "URGENT") {
+                await ticketQueue.add("urgent_ticket", {
+                   id: created.id,
+                   priority: created.priority, 
+                });
+            }
 
             // block logic for ticket timeline created
             await this.timelineService.createTicketTimeline(created.id, user);
