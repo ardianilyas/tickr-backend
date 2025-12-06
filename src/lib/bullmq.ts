@@ -1,8 +1,8 @@
 import { JobsOptions, Queue, QueueEvents, Worker } from "bullmq"
 import { redis } from "./redis"
 
-export const createQueue = (name: string) => {
-    return new Queue(name, {
+export function createQueue<T = any>(name: string) {
+    return new Queue<T>(name, {
         connection: redis,
     });
 }
