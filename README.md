@@ -16,6 +16,6 @@
 - Ticket Comments
 
 ## Todo Phase 1
-- [ ] Add BullMQ and Redis
-- [ ] Add Queue and Worker
-- [ ] Add Send Email to Admin (when ticket priority is High or Urgent)
+- [x] Add BullMQ and Redis
+- [x] Add Queue and Worker
+- [x] Add Send Email to Admin (when ticket priority is High or Urgent)
