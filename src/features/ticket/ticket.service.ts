@@ -1,12 +1,13 @@
 import { ForbiddenError } from "../../errors/ForbiddenError";
 import { NotFoundError } from "../../errors/NotFoundError";
-import { TicketStatus, UserRole } from "../../generated/prisma/enums";
+import { TicketPriority, TicketStatus, UserRole } from "../../generated/prisma/enums";
 import { RequestUser } from "../../types/RequestUser";
 import { logger } from "../../utils/logger";
 import { TimelineService } from "../timeline/timeline.service";
+import { JOB_NAME } from "./ticket.constant";
 import { ticketQueue } from "./ticket.queue";
 import { TicketRepository } from "./ticket.repository";
-import { CreateTicketSchema, CreateTicketSchemaRepository, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
+import { CreateTicketSchema, UpdateTicketSchema, UpdateTicketStatusSchema } from "./ticket.schema";
 
 export class TicketService {
     constructor(private ticketRepo: TicketRepository, private timelineService: TimelineService) {}
@@ -45,9 +46,9 @@ export class TicketService {
         try {
             const created = await this.ticketRepo.createTicket({ ...data, createdById: user.id, code });
 
-            if (data.priority === "URGENT") {
-                await ticketQueue.add("urgent_ticket", {
-                   id: created.id,
+            if (data.priority === TicketPriority.URGENT) {
+                await ticketQueue.add(JOB_NAME.URGENT, {
+                   ticketId: created.id,
                    priority: created.priority, 
                 });
             }
