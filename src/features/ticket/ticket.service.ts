@@ -50,6 +50,7 @@ export class TicketService {
                 await ticketQueue.add(JOB_NAME.URGENT, {
                    ticketId: created.id,
                    priority: created.priority, 
+                   ticketCode: created.code,
                 });
             }
 
