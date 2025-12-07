@@ -21,4 +21,4 @@
 - [x] Add Send Email to Admin (when ticket priority is High or Urgent)
 
 ## Todo Phase 2
-- [ ] Add Ticket email view using react email
+- [x] Add Ticket email view using react email
