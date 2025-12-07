@@ -2,5 +2,6 @@ import { TicketPriority } from "../../generated/prisma/enums"
 
 export interface TicketJobData {
     ticketId: string,
-    priority: TicketPriority
+    priority: TicketPriority,
+    ticketCode: string,
 }
